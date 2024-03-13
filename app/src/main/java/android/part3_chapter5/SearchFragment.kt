@@ -37,4 +37,14 @@ class SearchFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    fun searchKeyword(text: String) {
+
+    }
+
+
 }

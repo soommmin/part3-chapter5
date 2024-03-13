@@ -53,23 +53,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
 
+        observableTextQuery = Observable
+            .create { emitter: ObservableEmitter<String>? ->
+                (menu.findItem(R.id.search).actionView as SearchView).apply {
+                    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(query: String): Boolean {
+                            emitter?.onNext(query)
+                            return false
+                        }
 
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String): Boolean {
-
-                    return false
+                        override fun onQueryTextChange(newText: String): Boolean {
+                            binding.viewPager.setCurrentItem(0, true)
+                            emitter?.onNext(newText)
+                            return false
+                        }
+                    })
                 }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    binding.viewPager.setCurrentItem(0, true)
-
-                    return false
-                }
-            })
-
-        }
-
+            }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                searchFragment.searchKeyword(it)
+            }
         return true
     }
 }
