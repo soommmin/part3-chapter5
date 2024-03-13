@@ -21,7 +21,8 @@ class SearchFragment : Fragment() {
     }
     private var binding: FragmentSearchResultBinding? = null
 
-    private val adapter by lazy { ListAdapter() }
+    private val adapter by lazy { ListAdapter(Handler(viewModel)) }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,6 +66,10 @@ class SearchFragment : Fragment() {
             adapter.submitList(it)
         }
     }
-
+    class Handler(private val viewModel: SearchViewModel) : ItemHandler {
+        override fun onClickFavorite(item: ListItem) {
+            viewModel.toggleFavorite(item)
+        }
+    }
 
 }

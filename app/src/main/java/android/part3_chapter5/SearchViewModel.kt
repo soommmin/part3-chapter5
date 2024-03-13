@@ -31,6 +31,31 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
             })
         )
     }
+    fun toggleFavorite(item: ListItem) {
+        _listLiveData.value = _listLiveData.value?.map {
+            if (it == item) {
+                when (it) {
+                    is ImageItem -> {
+                        it.copy(isFavorite = !item.isFavorite)
+                    }
+                    is VideoItem -> {
+                        it.copy(isFavorite = !item.isFavorite)
+                    }
+                    else -> {
+                        it
+                    }
+                }.also { changeItem ->
+                    if (Common.favoritesList.contains(item)) {
+                        Common.favoritesList.remove(item)
+                    } else {
+                        Common.favoritesList.add(changeItem)
+                    }
+                }
+            } else {
+                it
+            }
+        }
+    }
 
 
 

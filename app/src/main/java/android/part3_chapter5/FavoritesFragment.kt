@@ -6,6 +6,7 @@ import android.part3_chapter5.list.ListAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 
 class FavoritesFragment : Fragment() {
@@ -30,7 +31,19 @@ class FavoritesFragment : Fragment() {
             recyclerView.adapter = adapter
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        binding?.apply {
+            if (Common.favoritesList.isEmpty()) {
+                emptyTextView.isVisible = true
+                recyclerView.isVisible = false
+            } else {
+                emptyTextView.isVisible = false
+                recyclerView.isVisible = true
+            }
+        }
+        adapter.submitList(Common.favoritesList.sortedBy { it.dateTime })
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
